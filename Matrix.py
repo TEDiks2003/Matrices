@@ -14,8 +14,6 @@ class Matrix:
     def __init__(self, content: str):
         """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" """
 
-        # content format "x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;"
-
         col_counter = 0
         row_counter = 0
         row_num = 0
