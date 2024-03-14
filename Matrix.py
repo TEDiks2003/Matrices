@@ -8,6 +8,7 @@ class Matrix:
     _row_num: int
     _col_num: int
     _arr: NDArray[typing.Any, np.float64]
+    _determinant: float = None
 
     def __init__(self, content: str):
 
@@ -21,12 +22,14 @@ class Matrix:
             if char == ',':
                 row_counter += 1
             elif char == ';':
+                row_counter += 1
                 col_counter += 1
                 if row_num == 0:
                     row_num = row_counter
                     row_counter = 0
                 else:
                     assert row_counter == row_num, "Row's have different lengths!"
+                    row_counter = 0
 
         self._row_num = row_num
         self._col_num = col_counter
@@ -55,3 +58,8 @@ class Matrix:
 
     def get_arr(self) -> NDArray[typing.Any, np.float64]:
         return self._arr
+
+    def get_determinant(self) -> float:
+        if self._determinant is None:
+            self._determinant = np.linalg.det(self._arr)
+        return self._determinant
