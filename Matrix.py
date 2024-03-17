@@ -7,60 +7,84 @@ class Matrix:
     """Matrix Class with Matrix related Functions"""
     _row_num: int
     _col_num: int
-    _arr: np.ndarray[typing.Any, np.float64]
+    _arr: np.ndarray[typing.Any, np.float64] = None
     _determinant: float = None
     _is_square: bool
 
-    def __init__(self, content: str):
+    def __init__(self, content: str | np.ndarray[typing.Any, np.float64]):
         """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" """
+        if type(content) == str:
+            row_counter = 0
+            col_counter = 0
+            col_num = 0
 
-        col_counter = 0
-        row_counter = 0
-        row_num = 0
+            for char in content:
+                if char == ',':
+                    col_counter += 1
+                elif char == ';':
+                    col_counter += 1
+                    row_counter += 1
+                    if col_num == 0:
+                        col_num = col_counter
+                        col_counter = 0
+                    else:
+                        assert col_counter == col_num, "Row's have different lengths!"
+                        col_counter = 0
 
-        for char in content:
-            if char == ',':
-                row_counter += 1
-            elif char == ';':
-                row_counter += 1
-                col_counter += 1
-                if row_num == 0:
-                    row_num = row_counter
-                    row_counter = 0
+            self._col_num = col_num
+            self._row_num = row_counter
+
+            buffer = ""
+            content_list = []
+            current_list = []
+
+            for char in content:
+                if char == " ":
+                    continue
+                elif char == "," or char == ";":
+                    current_list.append(buffer)
+                    buffer = ""
+                    if char == ";":
+                        content_list.append(current_list)
+                        current_list = []
                 else:
-                    assert row_counter == row_num, "Row's have different lengths!"
-                    row_counter = 0
+                    buffer += char
 
-        self._row_num = row_num
-        self._col_num = col_counter
-        self._is_square = row_num == col_counter
+            try:
+                self._arr = np.asfarray(np.array(content_list))
+            except Exception as e:
+                print(e)
+                exit()
+        else:
+            try:
+                shape = content.shape
+            except Exception as e:
+                print("ERROR in constructing matrix from arr:", e)
 
-        buffer = ""
-        content_list = []
-        current_list = []
-
-        for char in content:
-            if char == ' ':
-                continue
-            elif char == ',' or char == ';':
-                current_list.append(buffer)
-                buffer = ""
-                if char == ';':
-                    content_list.append(current_list)
-                    current_list = []
+            if len(shape) == 1:
+                self._row_num = 1
+                self._col_num = shape[0]
             else:
-                buffer += char
+                self._row_num = shape[-2]
+                self._col_num = shape[-1]
+                self._arr = content
 
-        try:
-            self._arr = np.asfarray(np.array(content_list))
-        except Exception as e:
-            print(e)
-            exit()
+        self._is_square = self._row_num == self._col_num
 
+    @property
     def get_arr(self) -> np.ndarray[typing.Any, np.float64]:
         """Return Numpy Array storing content"""
         return self._arr
 
+    @property
+    def get_col_num(self):
+        return self._col_num
+
+    @property
+    def get_row_num(self):
+        return self._row_num
+
+    @property
     def get_determinant(self) -> float | None:
         """Return Matrix Determinant"""
         assert self._is_square, "Matrix is not square"
