@@ -12,7 +12,7 @@ class Matrix:
     _is_square: bool
 
     def __init__(self, content: str | np.ndarray[typing.Any, np.float64]):
-        """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" """
+        """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" or a numpy array """
         if type(content) == str:
             row_counter = 0
             col_counter = 0
@@ -78,10 +78,12 @@ class Matrix:
 
     @property
     def get_col_num(self):
+        """Return number of columns"""
         return self._col_num
 
     @property
     def get_row_num(self):
+        """Return number of rows"""
         return self._row_num
 
     @property

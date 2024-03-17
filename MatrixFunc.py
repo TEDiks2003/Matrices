@@ -4,6 +4,7 @@ from Matrix import Matrix
 
 
 def matrix_multiply(m1: Matrix, m2: Matrix) -> Matrix:
+    """Multiplies two matrices and returns new Matrix Object"""
     sum_int = m1.get_col_num
     assert sum_int == m2.get_row_num, "Matrices are incompatible for multiplication"
     rows = m1.get_row_num
