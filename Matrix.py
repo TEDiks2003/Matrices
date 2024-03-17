@@ -77,12 +77,12 @@ class Matrix:
         return self._arr
 
     @property
-    def get_col_num(self):
+    def get_col_num(self) -> int:
         """Return number of columns"""
         return self._col_num
 
     @property
-    def get_row_num(self):
+    def get_row_num(self) -> int:
         """Return number of rows"""
         return self._row_num
 
@@ -95,7 +95,7 @@ class Matrix:
             self._determinant = np.linalg.det(self._arr)
         return self._determinant
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Matrix array as string"""
         string = ""
         for row in self._arr:
