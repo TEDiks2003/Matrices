@@ -94,3 +94,12 @@ class Matrix:
         if self._determinant is None:
             self._determinant = np.linalg.det(self._arr)
         return self._determinant
+
+    def __str__(self):
+        """Matrix array as string"""
+        string = ""
+        for row in self._arr:
+            for entry in row:
+                string += str(entry)+", "
+            string = string[:-2]+";\n"
+        return string
