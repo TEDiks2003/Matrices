@@ -1,15 +1,15 @@
 import typing
 
 import numpy as np
-from nptyping import NDArray
 
 
 class Matrix:
     """Matrix Class with Matrix related Functions"""
     _row_num: int
     _col_num: int
-    _arr: NDArray[typing.Any, np.float64]
+    _arr: np.ndarray[typing.Any, np.float64]
     _determinant: float = None
+    _is_square: bool
 
     def __init__(self, content: str):
         """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" """
@@ -33,6 +33,7 @@ class Matrix:
 
         self._row_num = row_num
         self._col_num = col_counter
+        self._is_square = row_num == col_counter
 
         buffer = ""
         content_list = []
@@ -56,12 +57,14 @@ class Matrix:
             print(e)
             exit()
 
-    def get_arr(self) -> NDArray[typing.Any, np.float64]:
+    def get_arr(self) -> np.ndarray[typing.Any, np.float64]:
         """Return Numpy Array storing content"""
         return self._arr
 
-    def get_determinant(self) -> float:
+    def get_determinant(self) -> float | None:
         """Return Matrix Determinant"""
+        assert self._is_square, "Matrix is not square"
+
         if self._determinant is None:
             self._determinant = np.linalg.det(self._arr)
         return self._determinant
