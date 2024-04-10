@@ -1,5 +1,5 @@
 import numpy as np
-import numpy.linalg as la
+import scipy.linalg as la
 from Matrix import Matrix
 
 
@@ -33,3 +33,20 @@ def lu_decomposition(m: Matrix) -> (Matrix, Matrix, list[(int, int)]):
     mat = Matrix(m.get_arr.copy())
     lower_arr, upper_arr, swap_index = mat.lu_decomposition_self()
     return Matrix(lower_arr), Matrix(upper_arr), swap_index
+
+
+def lu_decomposition_no_pp(m: Matrix) -> (Matrix, Matrix):
+    mat = Matrix(m.get_arr.copy())
+    lower_arr, upper_arr = mat.lu_decomposition_self_no_pp()
+    return Matrix(lower_arr), Matrix(upper_arr)
+
+
+def cholesky(mat: Matrix) -> Matrix:
+    """Cholesky Decomposition"""
+    arr = la.cholesky(mat.get_arr.copy(), lower=False)
+    return Matrix(arr)
+
+def qr_decomposition(mat: Matrix) -> (Matrix, Matrix):
+    """QR decomposition"""
+    q, r = la.qr(mat.get_arr.copy())
+    return Matrix(q), Matrix(r)

@@ -183,3 +183,17 @@ class Matrix:
     def swap_rows_from_arr(self, arr: list[(int, int)]):
         for tup in arr:
             self._row_swap(tup[0], tup[1])
+
+    def lu_decomposition_self_no_pp(self) -> (np.ndarray[typing.Any, np.float64], np.ndarray[typing.Any, np.float64]):
+        """Decomposes Matrix using LU decomposition"""
+        lower = np.zeros((self._row_num, self._col_num), dtype=np.float64)
+        for k in range(self._row_num-1):
+            lower[k][k] = 1
+            entry_value = self._arr[k][k]
+            for i in range(k+1, self._row_num):
+                c = self._arr[i][k]/entry_value
+                self._row_add_row(i, k, -c)
+                lower[i][k] = c
+        lower[self._row_num-1][self._row_num-1] = 1
+
+        return lower, self._arr.copy()

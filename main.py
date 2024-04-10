@@ -1,18 +1,15 @@
 import numpy as np
 from Matrix import *
 from MatrixFunc import *
+import scipy as sc
 
 
 def program():
-    m1 = Matrix("-3,2,-1;6,-6,7;3,-4,4;")
+    m1 = Matrix("1,1;2,1;3,1;")
     print(m1)
-    lower, upper, swaps = lu_decomposition(m1)
-    m1.swap_rows_from_arr(swaps)
-    print(lower)
-    print(upper)
-    print(m1)
-    print(matrix_multiply(lower, upper))
-
+    q, r = qr_decomposition(m1)
+    print(q)
+    print(r)
 
 
 # Press the green button in the gutter to run the script.
