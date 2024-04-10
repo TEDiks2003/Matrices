@@ -2,6 +2,10 @@ import typing
 
 import numpy as np
 
+from typing import TypeVar
+
+Mat = TypeVar("Mat", bound="Matrix")
+
 
 class Matrix:
     """Matrix Class with Matrix related Functions"""
@@ -158,3 +162,24 @@ class Matrix:
         assert index > 0, "Only found 0 coefficients"
         return index
 
+    def lu_decomposition_self(self) -> (np.ndarray[typing.Any, np.float64], np.ndarray[typing.Any, np.float64], [(int, int)]):
+        """Decomposes Matrix using LU decomposition"""
+        swap_record = []
+        lower = np.zeros((self._row_num, self._col_num), dtype=np.float64)
+        for k in range(self._row_num-1):
+            lower[k][k] = 1
+            index_to_swap = self._find_largest_coefficient(k)
+            swap_record.append((k, index_to_swap))
+            self._row_swap(k, index_to_swap)
+            entry_value = self._arr[k][k]
+            for i in range(k+1, self._row_num):
+                c = self._arr[i][k]/entry_value
+                self._row_add_row(i, k, -c)
+                lower[i][k] = c
+        lower[self._row_num-1][self._row_num-1] = 1
+
+        return lower, self._arr.copy(), swap_record
+
+    def swap_rows_from_arr(self, arr: list[(int, int)]):
+        for tup in arr:
+            self._row_swap(tup[0], tup[1])

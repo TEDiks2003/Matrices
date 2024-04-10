@@ -27,3 +27,9 @@ def matrix_multiply(m1: Matrix, m2: Matrix) -> Matrix:
         output_arr.append(row)
 
     return Matrix(np.array(output_arr))
+
+
+def lu_decomposition(m: Matrix) -> (Matrix, Matrix, list[(int, int)]):
+    mat = Matrix(m.get_arr.copy())
+    lower_arr, upper_arr, swap_index = mat.lu_decomposition_self()
+    return Matrix(lower_arr), Matrix(upper_arr), swap_index
