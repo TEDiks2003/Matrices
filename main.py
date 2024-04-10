@@ -4,11 +4,10 @@ from MatrixFunc import *
 
 
 def program():
-    m1 = Matrix("7,4,9;2,1,1;")
-    m2 = Matrix("5,3;3,-3;-8,7;")
-    m3 = matrix_multiply(m1, m2)
-    print(m3)
-
+    m1 = Matrix("2,3,-2,3;4,2,-1,9;4,-8,2,-6;")
+    print(m1)
+    m1.solve_partial_pivoting()
+    print(m1)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
