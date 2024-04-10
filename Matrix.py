@@ -259,3 +259,14 @@ class Matrix:
 
         return ret/scalar
 
+    def append_b(self, b: np.ndarray[typing.Any, np.float64]) -> None:
+        """Append vector b to square matrix"""
+        assert self._is_square, "Not a square matrix"
+        assert b.shape == (self._row_num,), "Incorrect shape of b"
+
+        self._arr = np.append(self._arr, np.array([b]).T, axis=1)
+        self._col_num += 1
+        self._is_square = False
+        self._is_linalg_system = True
+
+

@@ -5,9 +5,10 @@ import scipy as sc
 
 
 def program():
-    m1 = Matrix("9,1,1,10;2,10,3,19;3,4,11,0;")
+    m1 = Matrix("9,1,1;2,10,3;3,4,11;")
     print(m1)
-    arr = m1.jacobi([0.0, 0.0, 0.0], 0.0001)
+    m1.append_b(np.asfarray([10.0, 19.0, 0.0]))
+    print(m1)
 
 
 
