@@ -5,11 +5,10 @@ import scipy as sc
 
 
 def program():
-    m1 = Matrix("1,1;2,1;3,1;")
+    m1 = Matrix("9,1,1,10;2,10,3,19;3,4,11,0;")
     print(m1)
-    q, r = qr_decomposition(m1)
-    print(q)
-    print(r)
+    arr = m1.jacobi([0.0, 0.0, 0.0], 0.0001)
+
 
 
 # Press the green button in the gutter to run the script.

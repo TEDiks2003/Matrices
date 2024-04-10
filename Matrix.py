@@ -14,6 +14,7 @@ class Matrix:
     _arr: np.ndarray[typing.Any, np.float64] = None
     _determinant: float = None
     _is_square: bool
+    _is_linalg_system: bool
 
     def __init__(self, content: str | np.ndarray[typing.Any, np.float64]):
         """Content Formatted like: \"x_1_1, x_2_1 x_3_1; x_1_2, x_2_2 x_3_2;\" or a numpy array """
@@ -74,6 +75,7 @@ class Matrix:
                 self._arr = content
 
         self._is_square = self._row_num == self._col_num
+        self._is_linalg_system = self._row_num+1 == self._col_num
 
     @property
     def get_arr(self) -> np.ndarray[typing.Any, np.float64]:
@@ -180,7 +182,8 @@ class Matrix:
 
         return lower, self._arr.copy(), swap_record
 
-    def swap_rows_from_arr(self, arr: list[(int, int)]):
+    def swap_rows_from_arr(self, arr: list[(int, int)]) -> None:
+        """Performs swaps defined in swap record list"""
         for tup in arr:
             self._row_swap(tup[0], tup[1])
 
@@ -197,3 +200,62 @@ class Matrix:
         lower[self._row_num-1][self._row_num-1] = 1
 
         return lower, self._arr.copy()
+
+    def jacobi(self, init: list[np.float64], epsilon: np.float64) -> list[np.float64]:
+        """Jacobi Approximation given initial guess and absolute error epsilon"""
+        assert self._is_linalg_system, "Not a system of linear equations!"
+        assert len(init) == self._row_num, "Initial guess shape is incorrect"
+
+        while True:
+            print(init)
+            biggest_err = 0
+            new_init = []
+            for i in range(len(init)):
+                prev_app = init[i]
+                new_app = self._sub_iteration_approx(self.get_arr[i], init, i)
+                new_init.append(new_app)
+                err = abs(new_app-prev_app)
+                if err > biggest_err:
+                    biggest_err = err
+            init = new_init
+            if biggest_err < epsilon:
+                break
+
+        return init
+
+    def gauss_seidel(self, init: list[np.float64], epsilon: np.float64) -> list[np.float64]:
+        """Gauss Seidel Approximation given initial guess and absolute error epsilon"""
+        assert self._is_linalg_system, "Not a system of linear equations!"
+        assert len(init) == self._row_num, "Initial guess shape is incorrect"
+
+        while True:
+            print(init)
+            biggest_err = 0
+            for i in range(len(init)):
+                prev_app = init[i]
+                new_app = self._sub_iteration_approx(self.get_arr[i], init, i)
+                init[i] = new_app
+                err = abs(new_app-prev_app)
+                if err > biggest_err:
+                    biggest_err = err
+            if biggest_err < epsilon:
+                break
+
+        return init
+
+    @staticmethod
+    def _sub_iteration_approx(m_arr:  np.ndarray[typing.Any, np.float64], x:  list[np.float64], j: int) -> np.float64:
+        """Iterates approximations m_arr is array row, x is current approximations, j is index of x_j being approximated"""
+        assert len(m_arr) == len(x)+1, "Error!"
+        ret = 0.0
+        scalar = m_arr[j]
+        m_arr = np.delete(m_arr, j)
+        x = np.delete(x, j)
+        for i in range(len(x)):
+            c = -m_arr[i]
+            x_i = x[i]
+            ret += c*x_i
+        ret += m_arr[-1]
+
+        return ret/scalar
+
