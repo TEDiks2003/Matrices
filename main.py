@@ -1,14 +1,25 @@
 import numpy as np
 from Matrix import *
 from MatrixFunc import *
+from DLP import *
 import scipy as sc
 
 
 def program():
-    m1 = Matrix("9,1,1;2,10,3;3,4,11;")
-    print(m1)
-    m1.append_b(np.asfarray([10.0, 19.0, 0.0]))
-    print(m1)
+    mat = Matrix(
+        '''
+        1, 1, 1, 1, 0, 16;
+        1, 2, 0, 0, 1, 10;
+        1, 0, 0, 1, 1, 5;
+        0, 1, 1, 0, 1, 12;
+        2, 2, 1, 0, 0, 5;
+        '''
+    )
+    print(mat)
+    mat.optimise_for_solving()
+    print(mat)
+    print(mat.solve_mod_p(19))
+    # dlp(13, 6, 229, [4, 3, 19])
 
 
 

@@ -269,4 +269,174 @@ class Matrix:
         self._is_square = False
         self._is_linalg_system = True
 
+    def _find_non_zero_in_row(self, i: int, set_rows: list[bool] = None) -> list[int]:
+        """Finds non-zero entries in row and returns indexes"""
+        ret = []
+        row = self._arr[i]
+        for j in range(len(row)-1):
+            if set_rows is not None:
+                if set_rows[j]:
+                    continue
+            if row[j] != 0:
+                ret.append(j)
+        return ret
+
+    def _find_non_zero_in_col(self, i: int, set_rows: list[bool] = None) -> list[int]:
+        """Finds non-zero entries in col and returns indexes of row"""
+        ret = []
+        for j in range(self._row_num):
+            if set_rows is not None:
+                if set_rows[j]:
+                    continue
+            entry = self._arr[j][i]
+            if entry != 0:
+                ret.append(j)
+        return ret
+
+    def _has_only_one_non_zero_in_col(self, i: int, set_rows: list[bool] = None) -> bool:
+        """checks if row/column at i had only one non-zero entry"""
+        found_non_zero = False
+        is_true = True
+        for j in range(self._row_num):
+            if set_rows is not None:
+                if set_rows[j]:
+                    continue
+            entry = self._arr[j][i]
+            if entry != 0:
+                if found_non_zero:
+                    is_true = False
+                    break
+                else:
+                    found_non_zero = True
+
+        return is_true
+
+    @staticmethod
+    def _is_all_set(arr: list[bool]) -> bool:
+        """Checks if all bool are true in arr"""
+        is_set = True
+        for s in arr:
+            if not s:
+                is_set = False
+        return is_set
+
+    def optimise_for_solving(self) -> None:
+        """swaps around rows based on zeroes in mat"""
+        assert self._is_linalg_system, "Matrix is a linalg system"
+        set_rows = [False for n in range(self._row_num)]
+        # set trivial rows and columns
+        to_swap = []
+        for i in range(self._row_num):
+            indexes = self._find_non_zero_in_row(i)
+            if len(indexes) == 1:
+                index = indexes[0]
+                if index != i:
+                    to_swap.append([index, i])
+                set_rows[index] = True
+            else:
+                for index in indexes:
+                    if self._has_only_one_non_zero_in_col(index):
+                        if index != i:
+                            to_swap.append([index, i])
+                        set_rows[index] = True
+                        break
+
+        for a in range(len(to_swap)):
+            target = to_swap[a][1]
+            destination = to_swap[a][0]
+            for b in range(a+1, len(to_swap)):
+                if to_swap[b][1] == destination:
+                    to_swap[b][1] = target
+
+        for swap in to_swap:
+            self._row_swap(swap[0], swap[1])
+
+        loops = set_rows.count(False)
+
+        # set rest of matrix
+
+        i = 0
+        while not self._is_all_set(set_rows):
+            if not set_rows[i]:
+                indexes_i = self._find_non_zero_in_row(i, set_rows)
+                if len(indexes_i) == 1:
+                    index = indexes_i[0]
+                    if index != i:
+                        self._row_swap(index, i)
+                    set_rows[index] = True
+                else:
+                    for index in indexes_i:
+                        if self._has_only_one_non_zero_in_col(index, set_rows):
+                            if index != i:
+                                self._row_swap(index, i)
+                            set_rows[index] = True
+                            break
+                if loops < 1:
+                    if i not in indexes_i:
+                        row_with_i = self._find_non_zero_in_col(i)
+                        for j in row_with_i:
+                            if not set_rows[j]:
+                                indexes_j = self._find_non_zero_in_row(j)
+                                swap = True
+                                for index in indexes_j:
+                                    if index == i or set_rows[index]:
+                                        continue
+                                    if self._has_only_one_non_zero_in_col(index, set_rows):
+                                        swap = False
+                                        break
+                                if swap:
+                                    self._row_swap(i, j)
+                                    set_rows[i] = True
+                                    break
+                    else:
+                        do_set = True
+                        for index in indexes_i:
+                            if index == i or set_rows[index]:
+                                continue
+                            if self._has_only_one_non_zero_in_col(index, set_rows):
+                                do_set = False
+                                break
+                        if do_set:
+                            set_rows[i] = True
+            i += 1
+            if i >= self._row_num:
+                loops -= 1
+                i = 0
+
+    def _row_add_row_mod(self, row1: int, row2: int, c: int, mod: int) -> None:
+        """Add rows: row1 = row1+c*row2 % mod"""
+        assert row1 < self._row_num and row2 < self._row_num, "Row number out of index"
+
+        self._arr[row1] = np.fmod(np.add(self._arr[row1], np.fmod(self._arr[row2]*c, mod)), mod)
+
+    def _row_multiplication_mod(self, row: int, c: int, mod: int) -> None:
+        """Multiply row by constant"""
+        assert row < self._row_num, "Row number out of index"
+        vec = np.array([1.0 for i in range(self._row_num)])
+        vec[row] = c
+        self._arr = np.fmod((self._arr.T * vec).T, mod)
+
+    def solve_mod_p(self, mod: int) -> list[np.float64]:
+        """Solve system mod n"""
+        assert self._is_linalg_system, "Can only solve systems of linear equations"
+        self._arr = np.fmod(self._arr, mod)
+        for k in range(self._row_num - 1):
+            entry_value = self._arr[k][k]
+            for i in range(k + 1, self._row_num):
+                c = (self._arr[i][k] * self.find_mod_inverse(int(entry_value), mod)) % mod
+                self._row_add_row_mod(i, k, -c, mod)
+
+        for k in range(self._row_num - 1, -1, -1):
+            val = self._arr[k][k]
+            self._row_multiplication(k, self.find_mod_inverse(int(val), mod))
+            for i in range(k - 1, -1, -1):
+                val = self._arr[i][k]
+                self._row_add_row_mod(i, k, -val, mod)
+
+        return [row[self._col_num-1] for row in self._arr]
+
+    @staticmethod
+    def find_mod_inverse(x: int, mod: int) -> int:
+        """Finds inverse of x"""
+        return pow(x, mod-2, mod)
 
