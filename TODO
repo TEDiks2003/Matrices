@@ -12,20 +12,11 @@ systems_3:
 
 systems_4:
 - (IMPORTANT?) Newtons Method
-- (IMPORTANT?) Solution mod p
 
 ODE
 num_diff:
-- differentiating at x, finding right h
-- Central Difference formulae
-- Central Difference Higher derovatove
-- finding h
-- Richardson Extrapolation
 - implementing in Newtons Method
 
-solving_DE_1:
-- Euler's Method
-- Runge-Kutta
 
 solving_DE_2:
 - Boundary Value Problem

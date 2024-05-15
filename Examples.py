@@ -55,3 +55,16 @@ def program():
     x = [0, 5, 37, sol[1]]
     n = [4, 9, 43, 17]
     print(crt(n, x))
+
+def program():
+
+    p = np.poly1d([-1, 7, -7])
+    q = np.poly1d([3, -3, 8])
+    x = np.arange(20)
+    y = p(x)
+    y_2 = q(x)
+    plt.plot(x, y, label="p")
+    plt.plot(x, y_2, label="q")
+    plt.legend()
+    plt.grid()
+    plt.show()

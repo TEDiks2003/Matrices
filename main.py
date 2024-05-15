@@ -6,15 +6,22 @@ from InterpolationFunc import *
 import scipy as sc
 from random import sample
 from NumDiff import *
+from ODE import *
+import matplotlib.pyplot as plt
 
 
 def program():
 
-    f = lambda x: math.cos(x)
-    y = 0.8
-
-    print(f"h^2: {dif_central_formulae(f, y, 2, 2)}, h^v: {dif_central_formulae(f, y, 2, 4)}")
-    print(f(0.8))
+    p = np.poly1d([-1, 7, -7])
+    q = np.poly1d([3, -3, 8])
+    x = np.arange(20)
+    y = p(x)
+    y_2 = q(x)
+    plt.plot(x, y, label="p")
+    plt.plot(x, y_2, label="q")
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
 # Press the green button in the gutter to run the script.
