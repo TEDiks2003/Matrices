@@ -156,3 +156,22 @@ def cubic_spline_manual(x_arr: np_farr, y_arr: np_farr, s_d_0: float, s_d_n: flo
 def cubic_spline_scipy(x_arr: np_farr, y_arr: np_farr, ends: ((float, float), (float, float))):
     return sc.interpolate.CubicSpline(x_arr, y_arr, bc_type=ends)
 
+
+def nevilles_method(x_arr: np_farr, y_arr: np_farr, x: float) -> float:
+    n = len(x_arr)
+    p_k = [y_arr]
+    for i in range(1, n):
+        p_i = []
+        for k in range(n-i):
+            l_l = (x-x_arr[k+i])
+            l_r = (p_k[i-1][k])
+            r_l = (p_k[i-1][k+1])
+            r_r = (x_arr[k]-x)
+            top_dif = (l_l*l_r)+(r_l*r_r)
+            bottom_dif = x_arr[k]-x_arr[k+i]
+            p_i_x_k = top_dif/bottom_dif
+            p_i.append(p_i_x_k)
+        p_k.append(p_i)
+
+    return p_k[-1][0]
+

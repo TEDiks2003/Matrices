@@ -9,10 +9,10 @@ from random import sample
 
 def program():
 
-    x = np.asfarray([0, 1, 2, 3])
-    y = np.asfarray([0, 0.5, 2.0, 1.5])
-    cubic_spline_manual(x, y, 0.2, -1, False)
-
+    x = np.asfarray([4.65, 4.70, 4.75, 4.80, 4.85])
+    y = np.asfarray([-4.26066, -1.68111, 1.17327, 4.31638, 7.76207])
+    f_x = nevilles_method(y, x, 0)
+    print(f_x)
 
 
 

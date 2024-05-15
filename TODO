@@ -17,8 +17,6 @@ systems_4:
 INTERPOLATION
 
 interpolation_3:
-- Splines
-- Neville's Method
 - Root finding Ridder's Method
 
 ODE
