@@ -5,12 +5,16 @@ from DLP import *
 from InterpolationFunc import *
 import scipy as sc
 from random import sample
+from NumDiff import *
 
 
 def program():
 
-    f = lambda x: -(1/((x-0.3)**2+0.01)-1/((x-0.8)**2+0.04))
-    print(ridders_method(f, 0.0, 1.0, 0.00000000001))
+    f = lambda x: math.cos(x)
+    y = 0.8
+
+    print(f"h^2: {dif_central_formulae(f, y, 2, 2)}, h^v: {dif_central_formulae(f, y, 2, 4)}")
+    print(f(0.8))
 
 
 # Press the green button in the gutter to run the script.
