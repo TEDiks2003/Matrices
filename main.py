@@ -9,11 +9,8 @@ from random import sample
 
 def program():
 
-    x = np.asfarray([4.65, 4.70, 4.75, 4.80, 4.85])
-    y = np.asfarray([-4.26066, -1.68111, 1.17327, 4.31638, 7.76207])
-    f_x = nevilles_method(y, x, 0)
-    print(f_x)
-
+    f = lambda x: -(1/((x-0.3)**2+0.01)-1/((x-0.8)**2+0.04))
+    print(ridders_method(f, 0.0, 1.0, 0.00000000001))
 
 
 # Press the green button in the gutter to run the script.

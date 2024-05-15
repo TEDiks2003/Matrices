@@ -14,11 +14,6 @@ systems_4:
 - (IMPORTANT?) Newtons Method
 - (IMPORTANT?) Solution mod p
 
-INTERPOLATION
-
-interpolation_3:
-- Root finding Ridder's Method
-
 ODE
 num_diff:
 - differentiating at x, finding right h

@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import scipy as sc
 import typing as typ
@@ -175,3 +177,37 @@ def nevilles_method(x_arr: np_farr, y_arr: np_farr, x: float) -> float:
 
     return p_k[-1][0]
 
+
+def ridders_method(f, x_1: float, x_2: float, epsilon: float) -> float:
+    y_1 = f(x_1)
+    y_2 = f(x_2)
+    is_pos_f = y_1 < 0
+
+    x_3 = (x_1+x_2)/2
+    y_3 = f(x_3)
+
+    if abs(y_3) < epsilon:
+        return x_3
+
+    c = 1 if (y_1-y_2) > 0 else -1
+
+    x_4 = x_3 + c*(x_3-x_1)*(y_3/math.sqrt(y_3**2-(y_1*y_2)))
+
+    while abs(f(x_4)) > epsilon:
+        x_k = [x_1, x_2, x_3, x_4]
+        neg = [x for x in x_k if f(x) < 0]
+        pos = [x for x in x_k if f(x) > 0]
+        if is_pos_f:
+            x_1 = max(neg)
+            x_2 = min(pos)
+        else:
+            x_2 = min(neg)
+            x_1 = max(pos)
+        x_3 = (x_1+x_2)/2
+        if abs(f(x_3)) < epsilon:
+            return x_3
+        c = 1 if (f(y_1) - f(y_2)) > 0 else -1
+        x_4 = x_3 + c * (x_3 - x_1) * (f(x_3) / math.sqrt(f(x_3) ** 2 - (f(x_1) * f(x_2))))
+        print(f"x4 = {x_4}")
+
+    return x_4
