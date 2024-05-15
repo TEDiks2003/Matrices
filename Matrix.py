@@ -7,6 +7,18 @@ from typing import TypeVar
 Mat = TypeVar("Mat", bound="Matrix")
 
 
+def gcd_extended(x: int, mod: int) -> (int, int, int):
+    """Finds inverse of x"""
+    if x == 0:
+        return mod, 0, 1
+
+    gcd, a1, b1 = gcd_extended(mod % x, x)
+    a = b1 - (mod // x) * a1
+    b = a1
+
+    return gcd, a, b
+
+
 class Matrix:
     """Matrix Class with Matrix related Functions"""
     _row_num: int
@@ -320,106 +332,83 @@ class Matrix:
                 is_set = False
         return is_set
 
+    @staticmethod
+    def update_dict(dic: dict[int, list[int]], rem: int):
+        del dic[rem]
+        for row, indexes in dic.items():
+            if rem in indexes:
+                dic[row].remove(rem)
+
+    @staticmethod
+    def swap_dict_keys(dic: dict[int, list[int]], i: int, j: int):
+        temp = dic[i]
+        dic[i] = dic[j]
+        dic[j] = temp
+
     def optimise_for_solving(self) -> None:
         """swaps around rows based on zeroes in mat"""
         assert self._is_linalg_system, "Matrix is a linalg system"
         set_rows = [False for n in range(self._row_num)]
+        n = self._row_num
         # set trivial rows and columns
-        to_swap = []
-        for i in range(self._row_num):
-            indexes = self._find_non_zero_in_row(i)
-            if len(indexes) == 1:
-                index = indexes[0]
-                if index != i:
-                    to_swap.append([index, i])
-                set_rows[index] = True
-            else:
-                for index in indexes:
-                    if self._has_only_one_non_zero_in_col(index):
-                        if index != i:
-                            to_swap.append([index, i])
-                        set_rows[index] = True
+
+        options_dict = {}
+        for row in range(n):
+            options_dict[row] = self._find_non_zero_in_row(row)
+
+        while not self._is_all_set(set_rows):
+            is_swap = False
+            target = -1
+            destination = -1
+            for row, indexes in options_dict.items():
+                if len(indexes) == 1:
+                    destination, target, is_swap = indexes[0], row, True
+                else:
+                    found_swap = False
+                    for e in indexes:
+                        if self._has_only_one_non_zero_in_col(e, set_rows):
+                            destination, target, is_swap = e, row, True
+                            found_swap = True
+                            break
+                    if found_swap:
+                        break
+            if not is_swap:
+                for row, indexes in options_dict.items():
+                    if row in indexes:
+                        self.update_dict(options_dict, row)
+                        set_rows[row] = True
+                        break
+                    else:
+                        indexes_c = self._find_non_zero_in_col(row, set_rows)
+                        destination, target, is_swap = indexes_c[0], row, True
                         break
 
-        for a in range(len(to_swap)):
-            target = to_swap[a][1]
-            destination = to_swap[a][0]
-            for b in range(a+1, len(to_swap)):
-                if to_swap[b][1] == destination:
-                    to_swap[b][1] = target
-
-        for swap in to_swap:
-            self._row_swap(swap[0], swap[1])
-
-        loops = set_rows.count(False)
-
-        # set rest of matrix
-
-        i = 0
-        while not self._is_all_set(set_rows):
-            if not set_rows[i]:
-                indexes_i = self._find_non_zero_in_row(i, set_rows)
-                if len(indexes_i) == 1:
-                    index = indexes_i[0]
-                    if index != i:
-                        self._row_swap(index, i)
-                    set_rows[index] = True
-                else:
-                    for index in indexes_i:
-                        if self._has_only_one_non_zero_in_col(index, set_rows):
-                            if index != i:
-                                self._row_swap(index, i)
-                            set_rows[index] = True
-                            break
-                if loops < 1:
-                    if i not in indexes_i:
-                        row_with_i = self._find_non_zero_in_col(i)
-                        for j in row_with_i:
-                            if not set_rows[j]:
-                                indexes_j = self._find_non_zero_in_row(j)
-                                swap = True
-                                for index in indexes_j:
-                                    if index == i or set_rows[index]:
-                                        continue
-                                    if self._has_only_one_non_zero_in_col(index, set_rows):
-                                        swap = False
-                                        break
-                                if swap:
-                                    self._row_swap(i, j)
-                                    set_rows[i] = True
-                                    break
-                    else:
-                        do_set = True
-                        for index in indexes_i:
-                            if index == i or set_rows[index]:
-                                continue
-                            if self._has_only_one_non_zero_in_col(index, set_rows):
-                                do_set = False
-                                break
-                        if do_set:
-                            set_rows[i] = True
-            i += 1
-            if i >= self._row_num:
-                loops -= 1
-                i = 0
+            if is_swap:
+                self._row_swap(destination, target)
+                self.swap_dict_keys(options_dict, destination, target)
+                set_rows[destination] = True
+                self.update_dict(options_dict, destination)
 
     def _row_add_row_mod(self, row1: int, row2: int, c: int, mod: int) -> None:
         """Add rows: row1 = row1+c*row2 % mod"""
         assert row1 < self._row_num and row2 < self._row_num, "Row number out of index"
-
-        self._arr[row1] = np.fmod(np.add(self._arr[row1], np.fmod(self._arr[row2]*c, mod)), mod)
+        scaled_row2 = self._arr[row2]*c
+        added_rows = np.add(self._arr[row1], scaled_row2)
+        added_rows_mod = np.remainder(added_rows, mod)
+        self._arr[row1] = added_rows_mod
 
     def _row_multiplication_mod(self, row: int, c: int, mod: int) -> None:
         """Multiply row by constant"""
         assert row < self._row_num, "Row number out of index"
         vec = np.array([1.0 for i in range(self._row_num)])
         vec[row] = c
-        self._arr = np.fmod((self._arr.T * vec).T, mod)
+        self._arr = np.remainder((self._arr.T * vec).T, mod)
 
     def solve_mod_p(self, mod: int) -> list[np.float64]:
         """Solve system mod n"""
         assert self._is_linalg_system, "Can only solve systems of linear equations"
-        self._arr = np.fmod(self._arr, mod)
+        self._arr = np.remainder(self._arr, mod)
+        self.optimise_for_solving()
         for k in range(self._row_num - 1):
             entry_value = self._arr[k][k]
             for i in range(k + 1, self._row_num):
@@ -428,7 +417,7 @@ class Matrix:
 
         for k in range(self._row_num - 1, -1, -1):
             val = self._arr[k][k]
-            self._row_multiplication(k, self.find_mod_inverse(int(val), mod))
+            self._row_multiplication_mod(k, self.find_mod_inverse(int(val), mod), mod)
             for i in range(k - 1, -1, -1):
                 val = self._arr[i][k]
                 self._row_add_row_mod(i, k, -val, mod)
@@ -437,6 +426,6 @@ class Matrix:
 
     @staticmethod
     def find_mod_inverse(x: int, mod: int) -> int:
-        """Finds inverse of x"""
-        return pow(x, mod-2, mod)
+        gcd, a, b = gcd_extended(x, mod)
+        return a
 

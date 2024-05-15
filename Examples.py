@@ -1,12 +1,3 @@
-import numpy as np
-from Matrix import *
-from MatrixFunc import *
-from DLP import *
-from InterpolationFunc import *
-import scipy as sc
-from random import sample
-
-
 def program():
     mat_str = """
     0,2,1,0,0,0,2,0,0,0,28717;
@@ -64,10 +55,3 @@ def program():
     x = [0, 5, 37, sol[1]]
     n = [4, 9, 43, 17]
     print(crt(n, x))
-
-
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    program()

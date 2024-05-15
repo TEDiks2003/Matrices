@@ -1,0 +1,42 @@
+systems_2:
+
+- PP Scaling
+- (IMPORTANT?) Condition Number systems_2
+- (IMPORTANT?) Estimating Condition Number
+
+systems_3:
+- banded LU
+- (IMPORTANT?) General Iteration Scheme
+- (IMPORTANT?) Convergence conditions
+- (IMPORTANT?) GS Relaxation, SOR method
+
+systems_4:
+- (IMPORTANT?) Newtons Method
+- (IMPORTANT?) Solution mod p
+
+INTERPOLATION
+
+interpolation_3:
+- Splines
+- Neville's Method
+- Root finding Ridder's Method
+
+ODE
+num_diff:
+- differentiating at x, finding right h
+- Central Difference formulae
+- Central Difference Higher derovatove
+- finding h
+- Richardson Extrapolation
+- implementing in Newtons Method
+
+solving_DE_1:
+- Euler's Method
+- Runge-Kutta
+
+solving_DE_2:
+- Boundary Value Problem
+- Finite difference method
+- non_linear BVP problems
+
+PLOTTING
