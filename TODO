@@ -10,13 +10,6 @@ systems_3:
 - (IMPORTANT?) Convergence conditions
 - (IMPORTANT?) GS Relaxation, SOR method
 
-systems_4:
-- (IMPORTANT?) Newtons Method
-
-ODE
-num_diff:
-- implementing in Newtons Method
-
 
 solving_DE_2:
 - Boundary Value Problem

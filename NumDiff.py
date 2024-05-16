@@ -1,5 +1,4 @@
-def dif_central_formulae(f, x:float, derivative: int = 1, order_of_h: int = 2, h: float = 0.0003
-):
+def dif_central_formulae(f, x: float, derivative: int = 1, order_of_h: int = 2, h: float = 0.0003):
     assert order_of_h in [2, 4], "order of h must be 2 or 4"
     assert derivative in [1, 2, 3], "order of derivative must be in [1, 2, 3]"
     if derivative == 1:

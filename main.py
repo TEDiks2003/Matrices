@@ -11,17 +11,15 @@ import matplotlib.pyplot as plt
 
 
 def program():
+    A = [
+        [lambda x: 1.4, lambda x: -1],
+        [lambda x: x[0]-1.6, lambda x: -1],
+    ]
 
-    p = np.poly1d([-1, 7, -7])
-    q = np.poly1d([3, -3, 8])
-    x = np.arange(20)
-    y = p(x)
-    y_2 = q(x)
-    plt.plot(x, y, label="p")
-    plt.plot(x, y_2, label="q")
-    plt.legend()
-    plt.grid()
-    plt.show()
+    b = np.asfarray([0.6, 4.6])
+    guess = np.asfarray([5, 5])
+
+    print(newton_non_linear(A, b, guess=guess, print_work=True))
 
 
 # Press the green button in the gutter to run the script.
